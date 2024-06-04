@@ -1,4 +1,5 @@
 library(shiny)
+library(bslib)
 library(ggplot2)
 
 # Define UI
@@ -6,14 +7,14 @@ ui <- fluidPage(
   titlePanel("Interpretation of confidence interval for means"),
   sidebarLayout(
     sidebarPanel(
-      sliderInput("lower_mu", "Lower population mean",
+      sliderInput("lower_mu", "Lower population mean (blue)",
                   min = 12, max = 18, value = 12,
                   step = 0.01, round = 2),
       br(),
       textOutput("lower_p_value_output"),
       textOutput("lower_critical_value"),
       br(),
-      sliderInput("upper_mu", "Upper population mean",
+      sliderInput("upper_mu", "Upper population mean (red)",
                   min = 22, max = 28, value = 28,
                   step = 0.01, round = 2),
       br(),
@@ -23,6 +24,12 @@ ui <- fluidPage(
     mainPanel(
       plotOutput("obs_plot")
     )
+  ),
+  bslib::card(
+    markdown("**Explanation**: The plot illustrates one possible interpretation
+             of the confidence interval for means. In this interpretation,
+             the sample mean is the critical value for two different sampling
+             distributions."),
   )
 )
 
@@ -125,7 +132,7 @@ server <- function(input, output) {
                            round(lower_bound, digits = 2),
                            "\nUpper bound of confidence interval: ",
                            round(upper_bound, digits = 2))) +
-      theme_classic()
+      theme_classic(base_size = 15)
   })
 }
 
