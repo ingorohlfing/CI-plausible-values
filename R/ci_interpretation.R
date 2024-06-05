@@ -27,9 +27,17 @@ ui <- fluidPage(
   ),
   bslib::card(
     markdown("**Explanation**: The plot illustrates one possible interpretation
-             of the confidence interval for means. In this interpretation,
-             the sample mean is the critical value for two different sampling
-             distributions."),
+             of the 95% confidence interval for means that is different from the
+             *95 percent of confidence intervals contain the true mean* interpretation.
+             In the alternative interpretation, the confidence interval is the
+             range of population means for which the sample mean does *not* achieve
+             statistical significence at the 0.05 level in a two-sided test.
+             The blue dashed line represents the population mean \u03bc that can be set
+             with one slider. For the chosen level of \u03bc, the upper-critical
+             value for the blue sampling distribution is calculated and shown as
+             the blue shaded area in the right tail. The displayed p-value is
+             the p-value of the sample mean for the chosen population mean \u03bc
+             for a two-sided test and a level of \u03b1 of 0.05."),
   )
 )
 
