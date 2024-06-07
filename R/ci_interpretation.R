@@ -7,28 +7,26 @@ ui <- fluidPage(
   titlePanel("Interpretation of confidence interval for means"),
   sidebarLayout(
     sidebarPanel(
-      sliderInput("lower_mu", "Lower population mean (blue)",
-                  min = 12, max = 18, value = 12,
-                  step = 0.01, round = 2),
+      sliderInput("sample_mean", "Sample mean",
+                  min = 19, max = 21, value = 20, step = 0.01),
+      sliderInput("sample_sd", "Sample standard deviation",
+                  min = 13, max = 17, value = 15, step = 0.01),
       br(),
+      sliderInput("lower_mu", "Lower population mean (blue)",
+                  min = 12, max = 18, value = 12, step = 0.01, round = 2),
       textOutput("lower_p_value_output"),
       textOutput("lower_critical_value"),
       br(),
       sliderInput("upper_mu", "Upper population mean (red)",
                   min = 22, max = 28, value = 28,
                   step = 0.01, round = 2),
-      br(),
       textOutput("upper_p_value_output"),
-      textOutput("upper_critical_value") #,
-      #br(),
-      #actionButton("resample_button", "Resample")
+      textOutput("upper_critical_value")
     ),
     mainPanel(
-      plotOutput("obs_plot")
-    )
-  ),
-  bslib::card(
-    markdown("**Explanation**: The plot illustrates one possible interpretation
+      card(
+      plotOutput("obs_plot"),
+      markdown("**Explanation**: The plot illustrates one possible interpretation
              of the 95% confidence interval for means that is different from the
              *95-percent-of-confidence-intervals-contain-the-true-mean* interpretation.
              In the alternative interpretation, the confidence interval is the
@@ -48,16 +46,39 @@ ui <- fluidPage(
              interpretation applies to the right-hand, red sampling
              distribution. \n
              *Enjoy*!")
+      )
+    ) #,
+  # bslib::card(
+  #   markdown("**Explanation**: The plot illustrates one possible interpretation
+  #            of the 95% confidence interval for means that is different from the
+  #            *95-percent-of-confidence-intervals-contain-the-true-mean* interpretation.
+  #            In the alternative interpretation, the confidence interval is the
+  #            range of population means for which the sample mean does *not* achieve
+  #            statistical significence at the 0.05 level in a two-sided test
+  #            (assuming it is the 95% confidence interval). \n
+  #            The left, blue dashed line represents the population mean \u03bc
+  #            that can be set with one slider. For the chosen level of \u03bc,
+  #            the *upper-critical* value for the blue sampling distribution is
+  #            calculated and shown as
+  #            the blue shaded area in the right tail. The displayed p-value is
+  #            the p-value of the sample mean for the chosen population mean \u03bc
+  #            for a two-sided test and a level of \u03b1 of 0.05. \n
+  #            When the population mean equal to the lower bound of the
+  #            confidence interval, the sample mean is exactly the right-tailed
+  #            critical value and the p-value equals 0.05. A similar
+  #            interpretation applies to the right-hand, red sampling
+  #            distribution. \n
+  #            *Enjoy*!")
+  # )
   )
 )
-
 # Define server logic
 server <- function(input, output) {
 
   # Calculate upper-tail p-value for given confidence and selected level of mu
   observe({
-    sample_mean <- 20
-    sample_sd <- 15
+    sample_mean <- input$sample_mean
+    sample_sd <- input$sample_sd
     sample_size <- 27
     standard_error <- sample_sd / sqrt(sample_size)
     p_value_calculation <- function(mu, lower_tail) {
@@ -98,8 +119,8 @@ server <- function(input, output) {
 
   # plot the sampling distribution for the chosen slider input and with sample mean highlighted
   output$obs_plot <- renderPlot({
-    sample_mean <- 20
-    sample_sd <- 15
+    sample_mean <- input$sample_mean
+    sample_sd <- input$sample_sd
     sample_size <- 27
     standard_error <- sample_sd / sqrt(sample_size)
     lower_bound <- sample_mean - 1.96*standard_error
