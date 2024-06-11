@@ -12,12 +12,12 @@ ui <- fluidPage(
       sliderInput("sample_sd", "Sample standard deviation",
                   min = 13, max = 17, value = 15, step = 0.01),
       br(),
-      sliderInput("lower_mu", "Lower population mean (blue)",
+      sliderInput("lower_mu", "Lower population mean",
                   min = 12, max = 18, value = 12, step = 0.01, round = 2),
       textOutput("lower_p_value_output"),
       textOutput("lower_critical_value"),
       br(),
-      sliderInput("upper_mu", "Upper population mean (red)",
+      sliderInput("upper_mu", "Upper population mean",
                   min = 22, max = 28, value = 28,
                   step = 0.01, round = 2),
       textOutput("upper_p_value_output"),
@@ -27,24 +27,27 @@ ui <- fluidPage(
       card(
       plotOutput("obs_plot"),
       markdown("**Explanation**: The plot illustrates one possible interpretation
-             of the 95% confidence interval for means that is different from the
+             of the 95% confidence interval (CI) for means. It is different from the
              *95-percent-of-confidence-intervals-contain-the-true-mean* interpretation.
-             In the alternative interpretation, the confidence interval is the
+             In the alternative interpretation, the two-sided 95% CI is the
              range of population means for which the sample mean does *not* achieve
-             statistical significence at the 0.05 level in a two-sided test
-             (assuming it is the 95% confidence interval). \n
+             statistical significence at the 0.05 level in a two-sided test.
+             \n
              The left, blue dashed line represents the population mean \u03bc
              that can be set with one slider. For the chosen level of \u03bc,
-             the *upper-critical* value for the blue sampling distribution is
-             calculated and shown as
-             the blue shaded area in the right tail. The displayed p-value is
-             the p-value of the sample mean for the chosen population mean \u03bc
-             for a two-sided test and a level of \u03b1 of 0.05. \n
-             When the population mean equal to the lower bound of the
-             confidence interval, the sample mean is exactly the right-tailed
+             the *right-tailed* critical value is calculated and shown as
+             the shaded area. The displayed p-value relates to
+             the sample mean for the chosen population mean \u03bc.
+             \n
+             When the population mean is equal to the lower bound of the
+             CI of the sample mean, the sample mean is equal to
+             the right-tailed
              critical value and the p-value equals 0.05. A similar
-             interpretation applies to the right-hand, red sampling
-             distribution. \n
+             interpretation applies to the upper bound of the CI and the
+             sampling distribution. In this case, the left tail and critical value
+             of the sampling distribution are relevant. \n
+             The location and width of the CI can be adjusted with the sliders
+             at the top of the panel.
              *Enjoy*!")
       )
     ) #,
@@ -66,7 +69,7 @@ ui <- fluidPage(
   #            When the population mean equal to the lower bound of the
   #            confidence interval, the sample mean is exactly the right-tailed
   #            critical value and the p-value equals 0.05. A similar
-  #            interpretation applies to the right-hand, red sampling
+  #            interpretation applies to the right-hand sampling
   #            distribution. \n
   #            *Enjoy*!")
   # )
@@ -137,29 +140,29 @@ server <- function(input, output) {
                        y = 0, yend = dnorm(x = input$lower_mu,
                                            mean = input$lower_mu,
                                            sd = standard_error)),
-                   color = "blue", linetype = "dashed") +
+                   color = "#4B0055", linetype = "dashed") +
       geom_segment(aes(x = input$upper_mu, xend = input$upper_mu,
                        y = 0, yend = dnorm(x = input$upper_mu,
                                            mean = input$upper_mu,
                                            sd = standard_error)),
-                   color = "red", linetype = "dashed") +
+                   color = "#009B95", linetype = "dashed") +
       stat_function(
-        fun = dnorm, geom = "line", color = "blue",
+        fun = dnorm, geom = "line", color = "#4B0055",
         xlim = c(9, qnorm(0.975, mean = input$lower_mu, sd = standard_error)),
         args = list(mean = input$lower_mu, sd = standard_error),
       ) +
       stat_function(
-        fun = dnorm, geom = "area", fill = "blue", alpha = 0.5,
+        fun = dnorm, geom = "area", fill = "#4B0055", alpha = 0.5,
         xlim = c(qnorm(0.975, mean = input$lower_mu, sd = standard_error), 31),
         args = list(mean = input$lower_mu, sd = standard_error)
       ) +
       stat_function(
-        fun = dnorm, geom = "line", color = "red",
+        fun = dnorm, geom = "line", color = "#009B95",
         xlim = c(qnorm(0.025, mean = input$upper_mu, sd = standard_error), 31),
         args = list(mean = input$upper_mu, sd = standard_error),
       ) +
       stat_function(
-        fun = dnorm, geom = "area", fill = "red", alpha = 0.5,
+        fun = dnorm, geom = "area", fill = "#009B95", alpha = 0.5,
         xlim = c(9, qnorm(0.025, mean = input$upper_mu, sd = standard_error)),
         args = list(mean = input$upper_mu, sd = standard_error)
       ) +
