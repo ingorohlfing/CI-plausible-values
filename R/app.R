@@ -1,25 +1,24 @@
-library(shiny)
 library(bslib)
 library(ggplot2)
+library(shiny)
 
-# Define UI
 ui <- fluidPage(
   titlePanel("Interpretation of confidence interval for means"),
   sidebarLayout(
     sidebarPanel(
       sliderInput("sample_mean", "Sample mean",
-                  min = 19, max = 21, value = 20, step = 0.01),
+                  min = 19, max = 21, value = 20, step = 0.1),
       sliderInput("sample_sd", "Sample standard deviation",
-                  min = 13, max = 17, value = 15, step = 0.01),
+                  min = 13, max = 17, value = 15, step = 0.1),
       br(),
       sliderInput("lower_mu", "Lower population mean",
-                  min = 12, max = 18, value = 12, step = 0.01, round = 2),
+                  min = 12, max = 18, value = 14, step = 0.1, round = 2),
       textOutput("lower_p_value_output"),
       textOutput("lower_critical_value"),
       br(),
       sliderInput("upper_mu", "Upper population mean",
-                  min = 22, max = 28, value = 28,
-                  step = 0.01, round = 2),
+                  min = 22, max = 28, value = 26,
+                  step = 0.1, round = 2),
       textOutput("upper_p_value_output"),
       textOutput("upper_critical_value"),
       br(),
@@ -30,7 +29,8 @@ ui <- fluidPage(
       card(
       plotOutput("obs_plot"),
       markdown("**Explanation**: The plot illustrates one possible interpretation
-             of the 95% confidence interval (CI) for means. It is different from the
+             of the 95% confidence interval (CI) for means for a fixed sample
+             size of 27 of one sample. The interpretation is different from the
              *95-percent-of-confidence-intervals-contain-the-true-mean* interpretation.
              In the alternative interpretation, the two-sided 95% CI is the
              range of population means for which the sample mean does *not* achieve
@@ -56,7 +56,7 @@ ui <- fluidPage(
     )
   )
 )
-# Define server logic
+
 server <- function(input, output) {
 
   # Calculate upper-tail p-value for given confidence and selected level of mu
@@ -107,8 +107,8 @@ server <- function(input, output) {
     sample_sd <- input$sample_sd
     sample_size <- 27
     standard_error <- sample_sd / sqrt(sample_size)
-    lower_bound <- sample_mean - 1.96*standard_error
-    upper_bound <- sample_mean + 1.96*standard_error
+    lower_bound <- sample_mean - 1.96 * standard_error
+    upper_bound <- sample_mean + 1.96 * standard_error
     # lower_p_value <- round(
     #   pnorm(mean = sample_mean, input$lower_mu, sd = standard_error,
     #         lower.tail = FALSE), digits = 3)
